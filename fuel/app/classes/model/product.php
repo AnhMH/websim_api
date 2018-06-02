@@ -15,20 +15,15 @@ class Model_Product extends Model_Abstract {
     /** @var array $_properties field of table */
     protected static $_properties = array(
         'id',
-        'admin_id',
-        'cate_id',
         'name',
+        'image',
         'description',
         'detail',
-        'avatar',
-        'gallery',
         'agent_price',
         'price',
-        'discount',
-        'rate',
+        'cate_id',
         'created',
-        'updated',
-        'disable'
+        'updated'
     );
 
     protected static $_observers = array(
@@ -54,16 +49,13 @@ class Model_Product extends Model_Abstract {
      */
     public static function add_update($param)
     {
-        // Init
-        $adminId = !empty($param['admin_id']) ? $param['admin_id'] : '';
         $self = array();
         
         // Check if exist User
         if (!empty($param['id'])) {
             $self = self::find($param['id']);
             if (empty($self)) {
-                self::errorNotExist('product_id');
-                return false;
+                $self = new self;
             }
         } else {
             $self = new self;
@@ -76,11 +68,11 @@ class Model_Product extends Model_Abstract {
                 self::setError($uploadResult['error']);
                 return false;
             }
-            $param['avatar'] = !empty($uploadResult['body']['avatar']) ? $uploadResult['body']['avatar'] : '';
+            $param['image'] = !empty($uploadResult['body']['image']) ? $uploadResult['body']['image'] : '';
         }
         
         // Set data
-        $self->set('admin_id', $adminId);
+        $self->set('id', $param['id']);
         if (!empty($param['name'])) {
             $self->set('name', $param['name']);
         }
@@ -93,23 +85,14 @@ class Model_Product extends Model_Abstract {
         if (!empty($param['detail'])) {
             $self->set('detail', $param['detail']);
         }
-        if (!empty($param['avatar'])) {
-            $self->set('avatar', $param['avatar']);
-        }
-        if (!empty($param['gallery'])) {
-            $self->set('gallery', $param['gallery']);
+        if (!empty($param['image'])) {
+            $self->set('image', $param['image']);
         }
         if (!empty($param['agent_price'])) {
             $self->set('agent_price', $param['agent_price']);
         }
         if (!empty($param['price'])) {
             $self->set('price', $param['price']);
-        }
-        if (!empty($param['discount'])) {
-            $self->set('discount', $param['discount']);
-        }
-        if (!empty($param['rate'])) {
-            $self->set('rate', $param['rate']);
         }
         
         // Save data
@@ -132,35 +115,12 @@ class Model_Product extends Model_Abstract {
      */
     public static function get_list($param)
     {
-        // Init
-        $adminId = !empty($param['admin_id']) ? $param['admin_id'] : '';
-        
         // Query
         $query = DB::select(
                 self::$_table_name.'.*'
             )
             ->from(self::$_table_name)
-            ->where(self::$_table_name.'.admin_id', $adminId)
         ;
-                        
-        // Filter
-        if (!empty($param['name'])) {
-            $query->where(self::$_table_name.'.name', 'LIKE', "%{$param['name']}%");
-        }
-        if (!empty($param['address'])) {
-            $query->where(self::$_table_name.'.address', 'LIKE', "%{$param['address']}%");
-        }
-        if (!empty($param['tel'])) {
-            $query->where(self::$_table_name.'.tel', 'LIKE', "%{$param['tel']}%");
-        }
-        if (!empty($param['email'])) {
-            $query->where(self::$_table_name.'.email', 'LIKE', "%{$param['email']}%");
-        }
-        if (!empty($param['disable'])) {
-            $query->where(self::$_table_name.'.disable', 1);
-        } else {
-            $query->where(self::$_table_name.'.disable', 0);
-        }
         
         // Pagination
         if (!empty($param['page']) && $param['limit']) {
