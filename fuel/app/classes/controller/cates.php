@@ -29,6 +29,13 @@ class Controller_Cates extends \Controller_App {
     }
     
     /**
+     * Get list
+     */
+    public function action_all() {
+        return \Bus\Cates_All::getInstance()->execute();
+    }
+    
+    /**
      * Enable/Diable
      */
     public function action_disable() {
