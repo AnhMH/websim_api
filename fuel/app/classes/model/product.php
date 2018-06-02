@@ -104,6 +104,19 @@ class Model_Product extends Model_Abstract {
             if (empty($self->id)) {
                 $self->id = self::cached_object($self)->_original['id'];
             }
+            // Reset tag
+            \DB::delete('product_tags')->where('product_id', $self->id)->execute();
+            if (!empty($param['tag_id'])) {
+                $tagIds = explode(',', $param['tag_id']);
+                $productTags = array();
+                foreach ($tagIds as $v) {
+                    $productTags[] = array(
+                        'product_id' => $self->id,
+                        'tag_id' => $v
+                    );
+                }
+                self::batchInsert('product_tags', $productTags);
+            }
             return $self->id;
         }
         
@@ -174,7 +187,9 @@ class Model_Product extends Model_Abstract {
             self::errorNotExist('product_id');
             return false;
         }
-        
+        $data['tag_id'] = Lib\Arr::field(Model_Product_Tag::get_all(array(
+            'product_id' => $id
+        )), 'id');
         return $data;
     }
     
