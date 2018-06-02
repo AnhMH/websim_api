@@ -134,9 +134,12 @@ class Model_Product extends Model_Abstract {
     {
         // Query
         $query = DB::select(
-                self::$_table_name.'.*'
+                self::$_table_name.'.*',
+                array('cates.name', 'cate_name')
             )
             ->from(self::$_table_name)
+            ->join('cates')
+            ->on('cates.id', '=', self::$_table_name.'.cate_id')
         ;
         
         // Pagination
