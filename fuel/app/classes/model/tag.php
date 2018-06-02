@@ -10,19 +10,12 @@ use Fuel\Core\DB;
  * @version 1.0
  * @author AnhMH
  */
-class Model_Product extends Model_Abstract {
+class Model_Tag extends Model_Abstract {
     
     /** @var array $_properties field of table */
     protected static $_properties = array(
         'id',
         'name',
-        'image',
-        'description',
-        'detail',
-        'agent_price',
-        'price',
-        'cate_id',
-        'supplier_id',
         'created',
         'updated'
     );
@@ -39,7 +32,7 @@ class Model_Product extends Model_Abstract {
     );
 
     /** @var array $_table_name name of table */
-    protected static $_table_name = 'products';
+    protected static $_table_name = 'tags';
 
     /**
      * Add update info
@@ -56,66 +49,21 @@ class Model_Product extends Model_Abstract {
         if (!empty($param['id'])) {
             $self = self::find($param['id']);
             if (empty($self)) {
-                $self = new self;
+                self::errorNotExist('tag_id');
             }
         } else {
             $self = new self;
         }
         
-        // Upload image
-        if (!empty($_FILES)) {
-            $uploadResult = \Lib\Util::uploadImage(); 
-            if ($uploadResult['status'] != 200) {
-                self::setError($uploadResult['error']);
-                return false;
-            }
-            $param['image'] = !empty($uploadResult['body']['image']) ? $uploadResult['body']['image'] : '';
-        }
-        
         // Set data
-        $self->set('id', $param['id']);
         if (!empty($param['name'])) {
             $self->set('name', $param['name']);
-        }
-        if (!empty($param['cate_id'])) {
-            $self->set('cate_id', $param['cate_id']);
-        }
-        if (!empty($param['supplier_id'])) {
-            $self->set('supplier_id', $param['supplier_id']);
-        }
-        if (!empty($param['description'])) {
-            $self->set('description', $param['description']);
-        }
-        if (!empty($param['detail'])) {
-            $self->set('detail', $param['detail']);
-        }
-        if (!empty($param['image'])) {
-            $self->set('image', $param['image']);
-        }
-        if (!empty($param['agent_price'])) {
-            $self->set('agent_price', $param['agent_price']);
-        }
-        if (!empty($param['price'])) {
-            $self->set('price', $param['price']);
         }
         
         // Save data
         if ($self->save()) {
             if (empty($self->id)) {
                 $self->id = self::cached_object($self)->_original['id'];
-            }
-            // Reset tag
-            \DB::delete('product_tags')->where('product_id', $self->id)->execute();
-            if (!empty($param['tag_id'])) {
-                $tagIds = explode(',', $param['tag_id']);
-                $productTags = array();
-                foreach ($tagIds as $v) {
-                    $productTags[] = array(
-                        'product_id' => $self->id,
-                        'tag_id' => $v
-                    );
-                }
-                self::batchInsert('product_tags', $productTags);
             }
             return $self->id;
         }
@@ -134,12 +82,9 @@ class Model_Product extends Model_Abstract {
     {
         // Query
         $query = DB::select(
-                self::$_table_name.'.*',
-                array('cates.name', 'cate_name')
+                self::$_table_name.'.*'
             )
             ->from(self::$_table_name)
-            ->join('cates')
-            ->on('cates.id', '=', self::$_table_name.'.cate_id')
         ;
         
         // Pagination
@@ -175,6 +120,50 @@ class Model_Product extends Model_Abstract {
     }
     
     /**
+     * Get all
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return array|bool
+     */
+    public static function get_all($param)
+    {
+        // Query
+        $query = DB::select(
+                self::$_table_name.'.*'
+            )
+            ->from(self::$_table_name)
+        ;
+        
+        // Pagination
+        if (!empty($param['page']) && $param['limit']) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
+        
+        // Sort
+        if (!empty($param['sort'])) {
+            if (!self::checkSort($param['sort'])) {
+                self::errorParamInvalid('sort');
+                return false;
+            }
+
+            $sortExplode = explode('-', $param['sort']);
+            if ($sortExplode[0] == 'created') {
+                $sortExplode[0] = self::$_table_name . '.created';
+            }
+            $query->order_by($sortExplode[0], $sortExplode[1]);
+        } else {
+            $query->order_by(self::$_table_name . '.created', 'DESC');
+        }
+        
+        // Get data
+        $data = $query->execute()->as_array();
+        
+        return $data;
+    }
+    
+    /**
      * Get detail
      *
      * @author AnhMH
@@ -187,12 +176,10 @@ class Model_Product extends Model_Abstract {
         
         $data = self::find($id);
         if (empty($data)) {
-            self::errorNotExist('product_id');
+            self::errorNotExist('tag_id');
             return false;
         }
-        $data['tag_id'] = Lib\Arr::field(Model_Product_Tag::get_all(array(
-            'product_id' => $id
-        )), 'id');
+        
         return $data;
     }
     

@@ -6,39 +6,39 @@
  * and open the template in the editor.
  */
 
-class Controller_Suppliers extends \Controller_App {
+class Controller_Tags extends \Controller_App {
     /**
      * Add/update info
      */
     public function action_addupdate() {
-        return \Bus\Suppliers_AddUpdate::getInstance()->execute();
+        return \Bus\Tags_AddUpdate::getInstance()->execute();
     }
     
     /**
      * Get detail
      */
     public function action_detail() {
-        return \Bus\Suppliers_Detail::getInstance()->execute();
+        return \Bus\Tags_Detail::getInstance()->execute();
     }
     
     /**
      * Get list
      */
     public function action_list() {
-        return \Bus\Suppliers_List::getInstance()->execute();
+        return \Bus\Tags_List::getInstance()->execute();
     }
     
     /**
-     * Get all
+     * Get list
      */
     public function action_all() {
-        return \Bus\Suppliers_All::getInstance()->execute();
+        return \Bus\Tags_All::getInstance()->execute();
     }
     
     /**
      * Enable/Diable
      */
     public function action_disable() {
-        return \Bus\Suppliers_Disable::getInstance()->execute();
+        return \Bus\Tags_Disable::getInstance()->execute();
     }
 }
