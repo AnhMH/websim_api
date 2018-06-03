@@ -192,7 +192,7 @@ class Model_Product extends Model_Abstract {
         }
         $data['tag_id'] = Lib\Arr::field(Model_Product_Tag::get_all(array(
             'product_id' => $id
-        )), 'id');
+        )), 'tag_id');
         return $data;
     }
     
