@@ -16,6 +16,7 @@ class Model_Tag extends Model_Abstract {
     protected static $_properties = array(
         'id',
         'name',
+        'type',
         'created',
         'updated'
     );
@@ -58,6 +59,9 @@ class Model_Tag extends Model_Abstract {
         // Set data
         if (!empty($param['name'])) {
             $self->set('name', $param['name']);
+        }
+        if (!empty($param['type'])) {
+            $self->set('type', $param['type']);
         }
         
         // Save data

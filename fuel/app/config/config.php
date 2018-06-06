@@ -328,7 +328,8 @@ return array(
     'authorize' => true,
     'unauthorize_url' => array(
         'versions/check',
-        'admins/login'
+        'admins/login',
+        'settings/general'
     ),
     'admin_authorize_url' => array(
         'admins/updateprofile',
