@@ -45,6 +45,9 @@ class Model_Setting extends Model_Abstract {
         // Get tags
         $data['tags'] = Model_Tag::get_all(array());
         
+        // Get sub cate
+        $data['sub_cates'] = Model_Sub_Cate::get_all(array());
+        
         return $data;
     }
 }
