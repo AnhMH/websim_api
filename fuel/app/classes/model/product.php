@@ -51,12 +51,15 @@ class Model_Product extends Model_Abstract {
     public static function add_update($param)
     {
         $self = array();
+        $isNew = true;
         
         // Check if exist User
         if (!empty($param['id'])) {
             $self = self::find($param['id']);
             if (empty($self)) {
                 $self = new self;
+            } else {
+                $isNew = false;
             }
         } else {
             $self = new self;
@@ -104,6 +107,11 @@ class Model_Product extends Model_Abstract {
             if (empty($self->id)) {
                 $self->id = self::cached_object($self)->_original['id'];
             }
+            
+            if (!empty($param['old_id']) && $isNew) {
+                \DB::delete(self::$_table_name)->where('id', $param['old_id'])->execute();
+            }
+            
             // Reset tag
             \DB::delete('product_tags')->where('product_id', $self->id)->execute();
             if (!empty($param['tag_id'])) {
@@ -141,6 +149,35 @@ class Model_Product extends Model_Abstract {
             ->join('cates')
             ->on('cates.id', '=', self::$_table_name.'.cate_id')
         ;
+        
+        // Filter
+        if (!empty($param['cate_id'])) {
+            $query->where(self::$_table_name . '.cate_id', $param['cate_id']);
+        }
+        if (!empty($param['price_from'])) {
+            $query->where(self::$_table_name . '.price', '>=', $param['price_from']);
+        }
+        if (!empty($param['price_to'])) {
+            $query->where(self::$_table_name . '.price', '<=', $param['price_to']);
+        }
+        if (!empty($param['sim'])) {
+            $arr1 = array(
+                '*', 'x'
+            );
+            $arr2 = array(
+                '[0-9]+', '[0-9]'
+            );
+            $param['sim'] = str_replace($arr1, $arr2, $param['sim']);
+            $query->where(DB::expr(self::$_table_name . ".id REGEXP '{$param['sim']}'"));
+        }
+        if (!empty($param['n'])) {
+            if (!is_array($param['n'])) {
+                $param['n'] = json_decode($param['n'], true);
+            }
+            foreach ($param['n'] as $n) {
+                $query->where(self::$_table_name . '.id', 'NOT LIKE', "%{$n}%");
+            }
+        }
         
         // Pagination
         if (!empty($param['page']) && $param['limit']) {
