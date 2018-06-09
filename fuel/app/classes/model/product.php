@@ -23,6 +23,9 @@ class Model_Product extends Model_Abstract {
         'price',
         'cate_id',
         'supplier_id',
+        'count_num',
+        'sum_num',
+        'sum_last_num',
         'created',
         'updated'
     );
@@ -52,10 +55,11 @@ class Model_Product extends Model_Abstract {
     {
         $self = array();
         $isNew = true;
+        $id = !empty($param['id']) ? $param['id'] : '';
         
         // Check if exist User
-        if (!empty($param['id'])) {
-            $self = self::find($param['id']);
+        if (!empty($id)) {
+            $self = self::find($id);
             if (empty($self)) {
                 $self = new self;
             } else {
@@ -76,7 +80,11 @@ class Model_Product extends Model_Abstract {
         }
         
         // Set data
-        $self->set('id', $param['id']);
+        $self->set('id', $id);
+        $self->set('count_num', strlen($id));
+        $sumNum = array_sum(str_split($id));
+        $self->set('sum_num', $sumNum);
+        $self->set('sum_last_num', substr($sumNum, -1));
         if (!empty($param['name'])) {
             $self->set('name', $param['name']);
         }
@@ -177,6 +185,20 @@ class Model_Product extends Model_Abstract {
             foreach ($param['n'] as $n) {
                 $query->where(self::$_table_name . '.id', 'NOT LIKE', "%{$n}%");
             }
+        }
+        if (!empty($param['sub_cate'])) {
+            $query->where(self::$_table_name . '.id', 'LIKE', "{$param['sub_cate']}%");
+        }
+        if (!empty($param['tag_id'])) {
+            $query->join('product_tags')
+                    ->on(self::$_table_name . '.id', '=', 'product_tags.product_id');
+            $query->where('product_tags.tag_id', $param['tag_id']);
+        }
+        if (!empty($param['tongdiem'])) {
+            $query->where(self::$_table_name . '.sum_num', $param['tongdiem']);
+        }
+        if (!empty($param['tongnut'])) {
+            $query->where(self::$_table_name . '.sum_last_num', $param['tongnut']);
         }
         
         // Pagination
