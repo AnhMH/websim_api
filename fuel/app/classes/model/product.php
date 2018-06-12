@@ -200,6 +200,17 @@ class Model_Product extends Model_Abstract {
         if (!empty($param['tongnut'])) {
             $query->where(self::$_table_name . '.sum_last_num', $param['tongnut']);
         }
+        if (!empty($param['date']) && preg_match("/^([1-9]|0[1-9]|[1-2][0-9]|3[0-1])\/([1-9]|0[1-9]|1[0-2])\/[0-9]{4}$/", $param['date'])) {
+            $query->where_open();
+            if (isset($param['dtp']) && ($param['dtp'] == 0 || $param['dtp'] == 2)) {
+                $query->where(DB::expr("RIGHT(".self::$_table_name . ".id, 4)"), date('jny', strtotime($param['date'])));
+                $query->or_where(DB::expr("RIGHT(".self::$_table_name . ".id, 6)"), date('dmy', strtotime($param['date'])));
+            }
+            if (isset($param['dtp']) && ($param['dtp'] == 0 || $param['dtp'] == 1)) {
+                $query->or_where(DB::expr("RIGHT(".self::$_table_name . ".id, 4)"), date('Y', strtotime($param['date'])));
+            }
+            $query->where_close();
+        }
         
         // Pagination
         if (!empty($param['page']) && $param['limit']) {
