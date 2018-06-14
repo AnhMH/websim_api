@@ -152,8 +152,12 @@ class Model_Page extends Model_Abstract {
         ;
         
         // Filter
-        if (isset($param['is_menu']) && $param['is_menu'] != '') {
-            $query->where(self::$_table_name . '.is_menu', $param['is_menu']);
+        if (isset($param['is_main_menu']) && $param['is_main_menu'] != '') {
+            $query->where(self::$_table_name . '.is_main_menu', $param['is_main_menu']);
+        }
+        if (!empty($param['is_footer_menu'])) {
+            $query->where(self::$_table_name . '.footer_menu_type', '!=', 0);
+            $query->where(self::$_table_name . '.footer_menu_type', 'IS NOT', null);
         }
         
         // Pagination
@@ -175,7 +179,8 @@ class Model_Page extends Model_Abstract {
             }
             $query->order_by($sortExplode[0], $sortExplode[1]);
         } else {
-            $query->order_by(self::$_table_name . '.created', 'DESC');
+            $query->order_by(self::$_table_name . '.order', 'ASC');
+            $query->order_by(self::$_table_name . '.footer_menu_type', 'ASC');
         }
         
         // Get data
@@ -194,8 +199,19 @@ class Model_Page extends Model_Abstract {
     public static function get_detail($param)
     {
         $id = !empty($param['id']) ? $param['id'] : '';
+        $url = !empty($param['url']) ? $param['url'] : '';
+        $data = array();
         
-        $data = self::find($id);
+        if (!empty($id)) {
+            $data = self::find($id);
+        } elseif (!empty($url)) {
+            $data = self::find('first', array(
+                'where' => array(
+                    'url' => $url
+                )
+            ));
+        }
+        
         if (empty($data)) {
             self::errorNotExist('page_id');
             return false;

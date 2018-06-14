@@ -13,9 +13,7 @@ namespace Bus;
 class Pages_Detail extends BusAbstract
 {
     /** @var array $_required field require */
-    protected $_required = array(
-        'id'
-    );
+    protected $_required = array();
 
     /** @var array $_length Length of fields */
     protected $_length = array(

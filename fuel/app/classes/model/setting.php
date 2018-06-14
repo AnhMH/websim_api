@@ -48,6 +48,16 @@ class Model_Setting extends Model_Abstract {
         // Get sub cate
         $data['sub_cates'] = Model_Sub_Cate::get_all(array());
         
+        // Get main menu
+        $data['main_menu'] = Model_Page::get_all(array(
+            'is_main_menu' => 1
+        ));
+        
+        // Get footer menu
+        $data['footer_menu'] = Model_Page::get_all(array(
+            'is_footer_menu' => 1
+        ));
+        
         return $data;
     }
 }
