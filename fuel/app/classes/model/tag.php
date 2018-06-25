@@ -201,13 +201,7 @@ class Model_Tag extends Model_Abstract {
         if (!is_array($ids)) {
             $ids = explode(',', $ids);
         }
-        foreach ($ids as $id) {
-            $self = self::find($id);
-            if (!empty($self)) {
-                $self->set('disable', $disable);
-                $self->save();
-            }
-        }
+        \DB::delete(self::$_table_name)->where('id', 'IN', $ids)->execute();
         return true;
     }
 }
