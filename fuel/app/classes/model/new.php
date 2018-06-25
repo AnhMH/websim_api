@@ -16,6 +16,7 @@ class Model_New extends Model_Abstract {
     protected static $_properties = array(
         'id',
         'name',
+        'url',
         'image',
         'description',
         'detail',
@@ -75,6 +76,7 @@ class Model_New extends Model_Abstract {
         // Set data
         if (!empty($param['name'])) {
             $self->set('name', $param['name']);
+            $self->set('url', Lib\Str::convertURL($param['name']));
         }
         if (!empty($param['description'])) {
             $self->set('description', $param['description']);
@@ -146,6 +148,50 @@ class Model_New extends Model_Abstract {
     }
     
     /**
+     * Get list
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return array|bool
+     */
+    public static function get_all($param)
+    {
+        // Query
+        $query = DB::select(
+                self::$_table_name.'.*'
+            )
+            ->from(self::$_table_name)
+        ;
+        
+        // Pagination
+        if (!empty($param['page']) && $param['limit']) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
+        
+        // Sort
+        if (!empty($param['sort'])) {
+            if (!self::checkSort($param['sort'])) {
+                self::errorParamInvalid('sort');
+                return false;
+            }
+
+            $sortExplode = explode('-', $param['sort']);
+            if ($sortExplode[0] == 'created') {
+                $sortExplode[0] = self::$_table_name . '.created';
+            }
+            $query->order_by($sortExplode[0], $sortExplode[1]);
+        } else {
+            $query->order_by(self::$_table_name . '.created', 'DESC');
+        }
+        
+        // Get data
+        $data = $query->execute()->as_array();
+        
+        return $data;
+    }
+    
+    /**
      * Get detail
      *
      * @author AnhMH
@@ -155,10 +201,21 @@ class Model_New extends Model_Abstract {
     public static function get_detail($param)
     {
         $id = !empty($param['id']) ? $param['id'] : '';
+        $url = !empty($param['url']) ? $param['url'] : '';
+        $data = array();
         
-        $data = self::find($id);
+        if (!empty($id)) {
+            $data = self::find($id);
+        } elseif (!empty($url)) {
+            $data = self::find('first', array(
+                'where' => array(
+                    'url' => $url
+                )
+            ));
+        }
+        
         if (empty($data)) {
-            self::errorNotExist('new_id');
+            self::errorNotExist('page_id');
             return false;
         }
         

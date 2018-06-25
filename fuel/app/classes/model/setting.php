@@ -58,6 +58,12 @@ class Model_Setting extends Model_Abstract {
             'is_footer_menu' => 1
         ));
         
+        // Get news
+        $data['news'] = Model_New::get_all(array(
+            'page' => 1,
+            'limit' => 10
+        ));
+        
         return $data;
     }
 }
