@@ -55,7 +55,7 @@ class Model_Product extends Model_Abstract {
     {
         $self = array();
         $isNew = true;
-        $id = !empty($param['id']) ? $param['id'] : '';
+        $id = !empty($param['name']) ? Lib\Str::getNumber($param['name']) : '';
         
         // Check if exist User
         if (!empty($id)) {
@@ -104,10 +104,10 @@ class Model_Product extends Model_Abstract {
             $self->set('image', $param['image']);
         }
         if (!empty($param['agent_price'])) {
-            $self->set('agent_price', $param['agent_price']);
+            $self->set('agent_price', Lib\Str::getNumber($param['agent_price']));
         }
         if (!empty($param['price'])) {
-            $self->set('price', $param['price']);
+            $self->set('price', Lib\Str::getNumber($param['price']));
         }
         
         // Save data
@@ -163,10 +163,10 @@ class Model_Product extends Model_Abstract {
             $query->where(self::$_table_name . '.cate_id', $param['cate_id']);
         }
         if (!empty($param['price_from'])) {
-            $query->where(self::$_table_name . '.price', '>=', $param['price_from']);
+            $query->where(self::$_table_name . '.price', '>=', Lib\Str::getNumber($param['price_from']));
         }
         if (!empty($param['price_to'])) {
-            $query->where(self::$_table_name . '.price', '<=', $param['price_to']);
+            $query->where(self::$_table_name . '.price', '<=', Lib\Str::getNumber($param['price_to']));
         }
         if (!empty($param['sim'])) {
             $arr1 = array(
@@ -260,9 +260,12 @@ class Model_Product extends Model_Abstract {
             self::errorNotExist('product_id');
             return false;
         }
-        $data['tag_id'] = Lib\Arr::field(Model_Product_Tag::get_all(array(
-            'product_id' => $id
-        )), 'tag_id');
+        if (!empty($param['from_admin'])) {
+            $data['tag_id'] = Lib\Arr::field(Model_Product_Tag::get_all(array(
+                'product_id' => $id
+            )), 'tag_id');
+        }
+        
         return $data;
     }
     

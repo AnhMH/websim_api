@@ -332,7 +332,8 @@ return array(
         'settings/general',
         'products/list',
         'pages/detail',
-        'news/detail'
+        'news/detail',
+        'products/detail'
     ),
     'admin_authorize_url' => array(
         'admins/updateprofile',

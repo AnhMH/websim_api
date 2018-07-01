@@ -223,4 +223,15 @@ class Str {
         
         return strtolower($str);
     }
+    
+    /**
+     * Get only number from string
+     *
+     * @author AnhMH
+     * @param string $string String for convert     
+     * @return string
+     */
+    public static function getNumber($string) {
+        return preg_replace('/\D/', '', $string);
+    }
 }
