@@ -330,6 +330,7 @@ return array(
         'versions/check',
         'admins/login',
         'settings/general',
+        'settings/getaddress',
         'products/list',
         'pages/detail',
         'news/detail',

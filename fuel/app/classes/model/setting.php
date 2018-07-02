@@ -64,6 +64,31 @@ class Model_Setting extends Model_Abstract {
             'limit' => 10
         ));
         
+        // Get address
+        if (!empty($param['get_address'])) {
+            $data['provinces'] = Model_Province::get_all(array());
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * Get general data
+     * @param type $param
+     * @return boolean
+     */
+    public static function get_address_data($param) {
+        // Init
+        $data = array();
+        
+        if (!empty($param['type'])) {
+            if ($param['type'] == 'district') {
+                $data = Model_District::get_all($param);
+            } else {
+                $data = Model_Ward::get_all($param);
+            }
+        }
+        
         return $data;
     }
 }

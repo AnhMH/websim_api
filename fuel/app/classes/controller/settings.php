@@ -13,4 +13,11 @@ class Controller_Settings extends \Controller_App {
     public function action_general() {
         return \Bus\Settings_General::getInstance()->execute();
     }
+    
+    /**
+     * Get address data
+     */
+    public function action_getaddress() {
+        return \Bus\Settings_GetAddress::getInstance()->execute();
+    }
 }
