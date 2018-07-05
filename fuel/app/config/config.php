@@ -334,7 +334,8 @@ return array(
         'products/list',
         'pages/detail',
         'news/detail',
-        'products/detail'
+        'products/detail',
+        'orders/addupdate'
     ),
     'admin_authorize_url' => array(
         'admins/updateprofile',
