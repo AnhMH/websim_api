@@ -13,4 +13,11 @@ class Controller_Orders extends \Controller_App {
     public function action_addupdate() {
         return \Bus\Orders_AddUpdate::getInstance()->execute();
     }
+    
+    /**
+     * Get list
+     */
+    public function action_list() {
+        return \Bus\Orders_List::getInstance()->execute();
+    }
 }
