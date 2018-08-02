@@ -20,4 +20,11 @@ class Controller_Orders extends \Controller_App {
     public function action_list() {
         return \Bus\Orders_List::getInstance()->execute();
     }
+    
+    /**
+     * Get detail
+     */
+    public function action_detail() {
+        return \Bus\Orders_Detail::getInstance()->execute();
+    }
 }

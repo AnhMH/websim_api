@@ -177,4 +177,26 @@ class Model_Order extends Model_Abstract {
             'data' => $data
         );
     }
+    
+    /**
+     * Get detail
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return array|bool
+     */
+    public static function get_detail($param)
+    {
+        $id = !empty($param['id']) ? $param['id'] : '';
+        
+        $data = self::find($id);
+        if (empty($data)) {
+            self::errorNotExist('order_id');
+            return false;
+        }
+        $data['order_products'] = Model_Order_Product::get_all(array(
+            'order_id' => $id
+        ));
+        return $data;
+    }
 }

@@ -52,4 +52,41 @@ class Model_Order_Product extends Model_Abstract {
         self::batchInsert(self::$_table_name, $data);
         return true;
     }
+    
+    /**
+     * Get all
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return array|bool
+     */
+    public static function get_all($param)
+    {
+        // Query
+        $query = DB::select(
+                self::$_table_name.'.*',
+                array('products.name', 'product_name'),
+                array('products.image', 'product_image'),
+                array('products.price', 'product_price')
+            )
+            ->from(self::$_table_name)
+            ->join('products', 'LEFT')
+            ->on(self::$_table_name.'.product_id', '=', 'products.id')
+        ;
+        
+        if (!empty($param['order_id'])) {
+            $query->where('order_id', $param['order_id']);
+        }
+        
+        // Pagination
+        if (!empty($param['page']) && $param['limit']) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
+        
+        // Get data
+        $data = $query->execute()->as_array();
+        
+        return $data;
+    }
 }
