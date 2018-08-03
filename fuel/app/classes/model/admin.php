@@ -28,7 +28,13 @@ class Model_Admin extends Model_Abstract {
         'description',
         'created',
         'updated',
-        'disable'
+        'disable',
+        'company_name',
+        'is_master',
+        'web_banner',
+        'homepage_block',
+        'product_block',
+        'order_block'
     );
 
     protected static $_observers = array(
@@ -138,6 +144,7 @@ class Model_Admin extends Model_Abstract {
                 return false;
             }
             $param['avatar'] = !empty($uploadResult['body']['avatar']) ? $uploadResult['body']['avatar'] : '';
+            $param['web_banner'] = !empty($uploadResult['body']['web_banner']) ? $uploadResult['body']['web_banner'] : '';
         }
         
         // Set data
@@ -162,7 +169,21 @@ class Model_Admin extends Model_Abstract {
         if (!empty($param['description'])) {
             $admin->set('description', $param['description']);
         }
-        
+        if (!empty($param['company_name'])) {
+            $admin->set('company_name', $param['company_name']);
+        }
+        if (!empty($param['web_banner'])) {
+            $admin->set('web_banner', $param['web_banner']);
+        }
+        if (!empty($param['homepage_block'])) {
+            $admin->set('homepage_block', $param['homepage_block']);
+        }
+        if (!empty($param['product_block'])) {
+            $admin->set('product_block', $param['product_block']);
+        }
+        if (!empty($param['order_block'])) {
+            $admin->set('order_block', $param['order_block']);
+        }
         // Save data
         if ($admin->save()) {
             $admin['token'] = Model_Authenticate::addupdate(array(
@@ -172,5 +193,23 @@ class Model_Admin extends Model_Abstract {
             return $admin;
         }
         return false;
+    }
+    
+    /**
+     * Get master info
+     *
+     * @author AnhMH
+     * @param array $param Input data
+     * @return array|bool Detail Admin or false if error
+     */
+    public static function get_master_info($param)
+    {
+        $data = self::find('first', array(
+            'where' => array(
+                'is_master' => 1
+            )
+        ));
+        
+        return $data;
     }
 }

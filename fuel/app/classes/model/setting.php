@@ -72,6 +72,9 @@ class Model_Setting extends Model_Abstract {
         // Get hotlines
         $data['hotlines'] = Model_Hotline::get_all(array());
         
+        // Get admin setting
+        $data['admin'] = Model_Admin::get_master_info(array());
+        
         return $data;
     }
     
