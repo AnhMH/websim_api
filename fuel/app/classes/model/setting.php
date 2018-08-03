@@ -69,6 +69,9 @@ class Model_Setting extends Model_Abstract {
             $data['provinces'] = Model_Province::get_all(array());
         }
         
+        // Get hotlines
+        $data['hotlines'] = Model_Hotline::get_all(array());
+        
         return $data;
     }
     

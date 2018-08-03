@@ -228,6 +228,17 @@ class Model_Hotline extends Model_Abstract {
         // Get data
         $data = $query->execute()->as_array();
         
+        if (!empty($data)) {
+            foreach ($data as &$val) {
+                $val['phone'] = explode('-', $val['phone']);
+                $val['phone_number'] = array();
+                foreach ($val['phone'] as $p) {
+                    $phoneNumber = Lib\Str::getNumber($p);
+                    $val['phone_number'][$phoneNumber] = $p;
+                }
+            }
+        }
+        
         return $data;
     }
 }
