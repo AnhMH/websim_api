@@ -194,6 +194,9 @@ class Model_Product extends Model_Abstract {
                     ->on(self::$_table_name . '.id', '=', 'product_tags.product_id');
             $query->where('product_tags.tag_id', $param['tag_id']);
         }
+        if (!empty($param['type'])) {
+            $query->where(self::$_table_name . '.count_num', $param['type']);
+        }
         if (!empty($param['tongdiem'])) {
             $query->where(self::$_table_name . '.sum_num', $param['tongdiem']);
         }
