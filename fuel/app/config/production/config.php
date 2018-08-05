@@ -1,6 +1,6 @@
 <?php
 $envConf = array(
-    'img_url' => 'http://imagewebsim.hoanganhonline.com\/',
+    'img_url' => 'http://imagewebsim.hoanganhonline.com/',
     'send_email' => true,
     'test_email' => '', // will send to this email for testing
 );
