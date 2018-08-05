@@ -1,8 +1,8 @@
 <?php 
 return array(	
-	'upload_dir' => '/var/www/upload/',
-	'img_dir' => '/var/www/img/',
-	'path' => '/var/www/img/' . date('Y/m/d') . '/',
+	'upload_dir' => '/home/hoangan1/imagewebsim.hoanganhonline.com/',
+	'img_dir' => '/home/hoangan1/imagewebsim.hoanganhonline.com/',
+	'path' => '/home/hoangan1/imagewebsim.hoanganhonline.com/' . date('Y/m/d') . '/',
 	'auto_process' => false,
 	'normalize' => true,
 	'change_case' => 'lower',
